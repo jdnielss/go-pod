@@ -1,0 +1,16 @@
+---
+contracts:
+- name: hello_world
+  path: "/"
+  method: GET
+  response_body_contains: "Hello, World!"
+
+- name: endpoint1
+  path: "/endpoint1"
+  method: GET
+  response_body_contains: "Hello, World! 1"
+
+- name: endpoint2
+  path: "/endpoint9"
+  method: GET
+  response_body_contains: "Hello, World! crot"
