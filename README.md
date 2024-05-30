@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="img/gopod.jpg" alt="This image generate by AI" />
+</p>
+
 # go-pod
 
 A simple application to write and run smoke tests for RESTful APIs.
