@@ -5,12 +5,8 @@ FROM golang:latest as builder
 WORKDIR /app
 
 # Copy the Go modules and build files
-COPY go.mod ./
-COPY go.sum ./
+COPY . . 
 RUN go mod download
-
-# Copy the rest of the source code
-COPY . .
 
 # Build the Go application
 RUN CGO_ENABLED=0 GOOS=linux go build -o app .
