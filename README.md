@@ -1,6 +1,6 @@
 # Project Name
 
-Brief description of your project.
+A simple application to write and run smoke tests for RESTful APIs.
 
 ## Installation
 
@@ -33,6 +33,13 @@ Brief description of your project.
     ```bash
     make build
     ```
+
+### Running
+
+The most convenient way of running this code, especially in a CI environment, is to use the docker image `bluehoodie/smoke`
+
+`docker run --rm -v "$(pwd)":/test jdnielss/pod -f /test/config.yaml -h http://{YOUR_URL}`
+
 
 ## Usage
 

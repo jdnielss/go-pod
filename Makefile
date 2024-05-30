@@ -13,6 +13,9 @@ all: build
 build:
 	$(GOBUILD) -o $(BINARY_NAME) pod.go
 
+docker:
+	docker build -t jdnielss/pod .
+
 clean:
 	$(GOCLEAN)
 	rm -f $(BINARY_NAME)
