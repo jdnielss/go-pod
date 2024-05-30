@@ -1,4 +1,4 @@
-# Project Name
+# go-pod
 
 A simple application to write and run smoke tests for RESTful APIs.
 
