@@ -1,4 +1,4 @@
-.PHONY: build clean
+.PHONY: build clean docker
 
 # Go parameters
 GOCMD=go
@@ -6,12 +6,12 @@ GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
 
 # Binary output
-BINARY_NAME=app
+BINARY_NAME=pod
 
 all: build
 
 build:
-	$(GOBUILD) -o $(BINARY_NAME) pod.go
+	$(GOBUILD) -o $(BINARY_NAME) main.go
 
 docker:
 	docker build -t jdnielss/pod .
