@@ -36,7 +36,7 @@ A simple application to write and run smoke tests for RESTful APIs.
 
 ### Running
 
-The most convenient way of running this code, especially in a CI environment, is to use the docker image `bluehoodie/smoke`
+The most convenient way of running this code, especially in a CI environment, is to use the docker image `jdnielss/pod`
 
 `docker run --rm -v "$(pwd)":/test jdnielss/pod -f /test/config.yaml -h http://{YOUR_URL}`
 
