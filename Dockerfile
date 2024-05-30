@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Copy the Go modules and build files
 COPY . . 
-RUN go mod download
+RUN go mod tidy
 
 # Build the Go application
 RUN CGO_ENABLED=0 GOOS=linux go build -o app .
