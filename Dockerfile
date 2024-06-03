@@ -15,7 +15,7 @@ RUN go mod download
 
 # Enable CGO and build the Go app
 ENV CGO_ENABLED=0
-RUN go build -o main .
+RUN go build -o main.go .
 
 # Use a minimal image for the final container
 FROM alpine:latest
