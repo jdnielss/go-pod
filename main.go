@@ -26,7 +26,7 @@ type Contracts struct {
 
 func main() {
 	// Parse command line arguments
-	yamlFilePath := flag.String("f", "smoke_test.yaml", "Path to YAML config file")
+	yamlFilePath := flag.String("f", "config.yaml", "Path to YAML config file")
 	baseURL := flag.String("h", "http://localhost:8080", "Base URL of the API")
 	flag.Parse()
 
