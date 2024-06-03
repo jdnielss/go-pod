@@ -1,24 +1,33 @@
 # Use the official Golang image as a base image
-FROM golang:latest as builder
+FROM golang:alpine AS builder
 
-# Set the working directory inside the container
+# Set the Current Working Directory inside the container
 WORKDIR /app
 
-# Copy the Go modules and build files
-COPY . . 
-RUN go mod tidy
+# Install necessary dependencies for CGO
+RUN apk add --no-cache gcc musl-dev
 
-# Build the Go application
-RUN CGO_ENABLED=0 GOOS=linux go build -o app .
+# Copy go mod and sum files
+COPY go.mod go.sum ./
 
-# Use a minimal base image to reduce the image size
+# Download all dependencies. Dependencies will be cached if the go.mod and go.sum files are not changed
+RUN go mod download
+
+# Copy the source from the current directory to the Working Directory inside the container
+COPY . .
+
+# Enable CGO and build the Go app
+ENV CGO_ENABLED=0
+RUN go build -o main .
+
+# Use a minimal image for the final container
 FROM alpine:latest
 
-# Set the working directory inside the container
-WORKDIR /root/
+# Set the Current Working Directory inside the container
+WORKDIR /app
 
-# Copy the built binary from the builder stage
-COPY --from=builder /app/app .
+# Copy the Pre-built binary file from the previous stage
+COPY --from=builder /app/main .
 
-# Set the entry point for the container
-ENTRYPOINT ["./app"]
+# Command to run the executable
+CMD ["./main"]
