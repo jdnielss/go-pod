@@ -1,24 +1,26 @@
-# Use the official Golang image as a base image
-FROM golang:latest as builder
+# First stage: Build the Go application
+FROM golang:latest AS builder
 
-# Set the working directory inside the container
+# Set the working directory
 WORKDIR /app
 
-# Copy the Go modules and build files
-COPY . . 
+# Copy the Go application files to the container
+COPY . .
+
+# Install any Go dependencies
 RUN go mod tidy
 
 # Build the Go application
-RUN CGO_ENABLED=0 GOOS=linux go build -o app .
+RUN go build -o go-pod
 
-# Use a minimal base image to reduce the image size
-FROM alpine:latest
+# Second stage: Create the runtime environment
+FROM gcr.io/distroless/base-debian11
 
-# Set the working directory inside the container
-WORKDIR /root/
+# Set the working directory
+WORKDIR /app
 
-# Copy the built binary from the builder stage
-COPY --from=builder /app/app .
+# Copy the Go binary from the build stage
+COPY --from=builder /app/go-pod /app/go-pod
 
-# Set the entry point for the container
-ENTRYPOINT ["./app"]
+# Define the entrypoint command
+ENTRYPOINT ["/app/go-pod"]
