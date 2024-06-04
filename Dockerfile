@@ -2,7 +2,7 @@
 FROM golang:latest AS builder
 
 # Set the working directory
-WORKDIR /
+WORKDIR /bin
 
 # Copy the Go application files to the container
 COPY . .
@@ -17,10 +17,10 @@ RUN go build -o go-pod
 FROM gcr.io/distroless/base-debian11
 
 # Set the working directory
-WORKDIR /
+WORKDIR /bin
 
 # Copy the Go binary from the build stage
-COPY --from=builder /go-pod /go-pod
+COPY --from=builder /bin/go-pod /bin/go-pod
 
 # Define the entrypoint command
-ENTRYPOINT ["/go-pod"]
+ENTRYPOINT ["/bin/go-pod"]
