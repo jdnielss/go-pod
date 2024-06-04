@@ -1,16 +1,29 @@
 ---
 contracts:
-- name: hello_world
-  path: "/"
-  method: GET
-  response_body_contains: "Hello, World!"
+- name: create_user
+  path: "/users"
+  method: POST
+  body: '{"name":"John Doe","email":"john@example.com"}'
+  response_body_contains: 'John Doe'
 
-- name: endpoint1
-  path: "/endpoint1"
+- name: get_users
+  path: "/users"
   method: GET
-  response_body_contains: "Hello, World! 1"
+  response_body_contains: 'John'
 
-- name: endpoint2
-  path: "/endpoint9"
-  method: GET
-  response_body_contains: "Hello, World! crot"
+- name: get_user_john_doe
+  path: '/users/0'
+  method: 'GET'
+  http_code_is: 200
+  response_body_contains: 'John'
+
+- name: delete_user
+  path: '/users/0'
+  method: 'DELETE'
+  http_code_is: 204
+
+- name: negatif_delete_user
+  path: '/users/0'
+  method: 'DELETE'
+  http_code_is: 204
+  response_body_contains: 'User not found'

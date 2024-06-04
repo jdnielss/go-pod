@@ -1,18 +1,24 @@
-FROM golang:latest AS builder
+# Use the official Golang image as a base image
+FROM golang:latest as builder
 
+# Set the working directory inside the container
 WORKDIR /app
 
-COPY . .
+# Copy the Go modules and build files
+COPY . . 
+RUN go mod tidy
 
-RUN go mod download
- 
-RUN go build -o main .
+# Build the Go application
+RUN CGO_ENABLED=0 GOOS=linux go build -o app .
 
+# Use a minimal base image to reduce the image size
 FROM alpine:latest
 
-WORKDIR /app
+# Set the working directory inside the container
+WORKDIR /root/
 
-COPY --from=builder /app/main .
+# Copy the built binary from the builder stage
+COPY --from=builder /app/app .
 
-# Command to run the executable
-CMD ["./main"]
+# Set the entry point for the container
+ENTRYPOINT ["./app"]

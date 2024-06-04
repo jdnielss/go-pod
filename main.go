@@ -15,9 +15,9 @@ type Contract struct {
 	Name                 string `yaml:"name"`
 	Path                 string `yaml:"path"`
 	Method               string `yaml:"method"`
-	ResponseBodyContains string `yaml:"response_body_contains"`
-	RequestBody          string `yaml:"body"`
-	HTTPCodeIs           int    `yaml:"http_code_is"`
+	Body                 string `yaml:"body,omitempty"`
+	ResponseBodyContains string `yaml:"response_body_contains,omitempty"`
+	HTTPCodeIs           int    `yaml:"http_code_is,omitempty"`
 }
 
 type Contracts struct {
@@ -53,22 +53,14 @@ func main() {
 		// Construct full URL
 		fullURL := strings.TrimSuffix(*baseURL, "/") + contract.Path
 
-		// Create the request
+		// Create HTTP request based on the method
 		var req *http.Request
 		var err error
-
-		switch strings.ToUpper(contract.Method) {
-		case "GET":
-			req, err = http.NewRequest(http.MethodGet, fullURL, nil)
-		case "POST":
-			req, err = http.NewRequest(http.MethodPost, fullURL, bytes.NewBufferString(contract.RequestBody))
-		case "PUT":
-			req, err = http.NewRequest(http.MethodPut, fullURL, bytes.NewBufferString(contract.RequestBody))
-		case "DELETE":
-			req, err = http.NewRequest(http.MethodDelete, fullURL, nil)
-		default:
-			fmt.Printf("%s API %s test %s! Unsupported method: %s\n", crossIcon, contract.Name, crossIcon, contract.Method)
-			continue
+		if contract.Method == http.MethodGet || contract.Method == http.MethodDelete {
+			req, err = http.NewRequest(contract.Method, fullURL, nil)
+		} else {
+			req, err = http.NewRequest(contract.Method, fullURL, bytes.NewBuffer([]byte(contract.Body)))
+			req.Header.Set("Content-Type", "application/json")
 		}
 
 		if err != nil {
@@ -85,12 +77,6 @@ func main() {
 		}
 		defer resp.Body.Close()
 
-		// Check HTTP status code if specified
-		if contract.HTTPCodeIs != 0 && resp.StatusCode != contract.HTTPCodeIs {
-			fmt.Printf("%s API %s test %s! Expected HTTP code: %d, Actual: %d\n", crossIcon, contract.Name, crossIcon, contract.HTTPCodeIs, resp.StatusCode)
-			continue
-		}
-
 		// Read response body
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
@@ -98,9 +84,15 @@ func main() {
 			continue
 		}
 
+		// Check HTTP status code
+		if contract.HTTPCodeIs != 0 && resp.StatusCode != contract.HTTPCodeIs {
+			fmt.Printf("%s API %s test %s! Expected HTTP code: %d, Actual: %d\n", crossIcon, contract.Name, crossIcon, contract.HTTPCodeIs, resp.StatusCode)
+			continue
+		}
+
 		// Check if response body contains expected string
 		if contract.ResponseBodyContains != "" && !strings.Contains(string(body), contract.ResponseBodyContains) {
-			fmt.Printf("%s API %s test %s! Expected: %s, Actual: %s\n", crossIcon, contract.Name, crossIcon, contract.ResponseBodyContains, string(body))
+			fmt.Printf("%s API %s test %s! Expected body to contain: %s, Actual: %s\n", crossIcon, contract.Name, crossIcon, contract.ResponseBodyContains, string(body))
 			continue
 		}
 
